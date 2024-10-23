@@ -14,7 +14,7 @@ function ChatBubble({ isMe, user, text, showUser = true }) {
             )}
 
             <pre
-                className={`chat-bubble max-w-screen-sm font-semibold whitespace-pre-wrap break-words ${
+                className={`chat-bubble max-w-[350px] md:max-w-screen-sm font-semibold whitespace-pre-wrap break-words ${
                     !isMe ? "bg-success/80 text-white" : ""
                 }`}
             >
