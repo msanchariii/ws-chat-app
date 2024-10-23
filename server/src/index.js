@@ -1,8 +1,11 @@
 import express from "express";
 import { WebSocketServer } from "ws";
 import { ChatApp } from "./ChatApp.js";
+import dotenv from "dotenv";
+
 import cors from "cors";
-const port = 3000;
+dotenv.config();
+const port = process.env.PORT || 3000;
 
 /*
  * Sending JSON: You can use JSON.stringify() to convert your JavaScript object into a JSON string before sending it over the WebSocket.

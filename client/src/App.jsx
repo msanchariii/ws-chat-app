@@ -2,6 +2,7 @@ import { useState } from "react";
 import Room from "./components/Room";
 import ChatBubble from "./components/ChatBubble";
 import MessageInput from "./components/MessageInput";
+const wsUrl = import.meta.env.VITE_WS_URL;
 
 function App() {
     const [isConnected, setIsConnected] = useState(false);
@@ -9,10 +10,13 @@ function App() {
     const [myUserId, setMyUserId] = useState("");
     const [messages, setMessages] = useState([]);
     const [socket, setSocket] = useState(null);
+
+    console.log("WS URL:", wsUrl);
+
     const handleJoin = (userName) => {
         console.log("Username:", userName);
         setMyUserName(userName);
-        const newSocket = new WebSocket("ws://localhost:3000");
+        const newSocket = new WebSocket(wsUrl);
         newSocket.onopen = () => {
             console.log("Connected to chat");
             newSocket.send(
