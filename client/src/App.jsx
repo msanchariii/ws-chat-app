@@ -34,9 +34,11 @@ function App() {
                 const data = JSON.parse(event.data);
                 const { type, user } = data;
                 console.log("Received data:", data);
+                // alert someone new joined the chat
                 if (type === "join") {
                     setMyUserId(user.id);
                 }
+                // display the message
                 if (type === "message") {
                     setMessages((prevMessages) => [
                         ...prevMessages,
@@ -47,6 +49,18 @@ function App() {
                         },
                     ]);
                     console.log(messages);
+                }
+
+                if (type === "alert") {
+                    // alert(data.message);
+                    // Alert the message of new user
+                    setMessages((prevMessages) => [
+                        ...prevMessages,
+                        {
+                            type: "alert",
+                            greeting: data.message,
+                        },
+                    ]);
                 }
             };
             console.log("user joining chat...");
@@ -97,20 +111,26 @@ function App() {
                     <div className="w-full py-4 px-6">
                         {
                             // map through messages and display them
-                            messages.map((message, index) => (
-                                <ChatBubble
-                                    key={index}
-                                    isMe={message.userId === myUserId}
-                                    user={message.userName}
-                                    text={message.text}
-                                    showUser={
-                                        index > 0
-                                            ? messages[index - 1].userId !==
-                                              message.userId
-                                            : true
-                                    }
-                                />
-                            ))
+                            messages.map((message, index) =>
+                                message.type && message.type === "alert" ? (
+                                    <p key={index} className="text-center my-2">
+                                        {message.greeting}
+                                    </p>
+                                ) : (
+                                    <ChatBubble
+                                        key={index}
+                                        isMe={message.userId === myUserId}
+                                        user={message.userName}
+                                        text={message.text}
+                                        showUser={
+                                            index > 0
+                                                ? messages[index - 1].userId !==
+                                                  message.userId
+                                                : true
+                                        }
+                                    />
+                                )
+                            )
                         }
                     </div>
                     {/*  input box to send message + send button*/}

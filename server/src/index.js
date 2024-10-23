@@ -2,8 +2,8 @@ import express from "express";
 import { WebSocketServer } from "ws";
 import { ChatApp } from "./ChatApp.js";
 import dotenv from "dotenv";
-
 import cors from "cors";
+
 dotenv.config();
 const port = process.env.PORT || 3000;
 
@@ -38,58 +38,81 @@ wss.on("connection", (ws) => {
     console.log("Client connected");
 
     ws.on("message", (message) => {
-        const data = JSON.parse(message);
-        const { type, payload } = data;
-        // when a user joins the chat
-        if (type === "join") {
-            const user = chatApp.joinUser(payload.userName);
-            console.log(payload.userName + "XXXX");
-            const allUsers = chatApp.getUsers();
-            ws.send(
-                JSON.stringify({
+        try {
+            const data = JSON.parse(message);
+            const { type, payload } = data;
+
+            //! joining the chat
+            if (type === "join") {
+                const user = chatApp.joinUser(payload.userName);
+                ws.userId = user.id;
+                console.log(payload.userName + "XXXX");
+                const newUser = {
                     type: "join",
                     message: `Welcome! ${payload.userName}`,
                     success: true,
                     user,
-                })
-            );
+                };
 
-            console.log(`User ${payload.userName} joined the chat`);
-            console.log("All Users: \n", allUsers);
-            // console.log(ws.clients);
-        }
-        //! sending and broadcasting messages
-        if (type === "message") {
-            const newMessage = {
-                type: "message",
-                payload: {
-                    text: data.payload.text,
-                    userId: data.payload.userId,
-                    userName: chatApp.getUserName(data.payload.userId),
-                },
-            };
+                ws.send(JSON.stringify(newUser));
 
-            chatApp.addMessage({
-                userId: newMessage.payload.userId,
-                userName: newMessage.payload.userName,
-                text: newMessage.payload.text,
-            });
-            console.log("All messages: \n", chatApp.loadMessages());
+                // Create a broadcast message to inform other clients about the new user
+                const alertNewUser = {
+                    type: "alert",
+                    message: `${payload.userName} has joined the chat.`,
+                };
 
-            console.log("Received message:", newMessage);
+                // Send the broadcast message to all clients except the new user
+                wss.clients.forEach((client) => {
+                    if (client !== ws && client.readyState === client.OPEN) {
+                        client.send(JSON.stringify(alertNewUser));
+                    }
+                });
+            }
 
-            // Broadcast the message to all clients
-            wss.clients.forEach((client) => {
-                if (client.readyState === client.OPEN) {
-                    client.send(JSON.stringify(newMessage));
-                }
-            });
+            //! sending messages
+            if (type === "message") {
+                const newMessage = {
+                    type: "message",
+                    payload: {
+                        text: data.payload.text,
+                        userId: data.payload.userId,
+                        userName: chatApp.getUserName(data.payload.userId),
+                    },
+                };
+
+                chatApp.addMessage({
+                    userId: newMessage.payload.userId,
+                    userName: newMessage.payload.userName,
+                    text: newMessage.payload.text,
+                });
+
+                wss.clients.forEach((client) => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(JSON.stringify(newMessage));
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Error handling message:", error);
         }
     });
-
+    //! Remove the user from the chat app when the WebSocket connection is closed
     ws.on("close", () => {
         console.log("Client disconnected");
-        chatApp.removeUser(ws);
+        wss.clients.forEach((client) => {
+            if (client !== ws && client.readyState === client.OPEN) {
+                client.send(
+                    JSON.stringify({
+                        type: "alert",
+                        message: `${chatApp.getUserName(
+                            ws.userId
+                        )} has left the chat.`,
+                    })
+                );
+            }
+        });
+        chatApp.removeUser(ws.userId);
     });
 });
 

@@ -34,6 +34,7 @@ export class ChatApp {
 
     removeUser(userId) {
         this.users = this.users.filter((user) => user.id !== userId);
+        this.userMap.delete(userId);
     }
 }
 

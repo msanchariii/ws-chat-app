@@ -14,12 +14,13 @@ function MessageInput({ onSend }) {
 
     return (
         <div className="absolute bottom-0 px-6 py-2 w-full flex justify-between items-center space-x-2 ">
-            <input
+            <textarea
                 type="text"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Type your message..."
-                className="input input-success flex-1"
+                rows={"1"}
+                className="textarea input-success flex-1 p-1"
             />
             <button onClick={handleSend} className="btn btn-success">
                 Send

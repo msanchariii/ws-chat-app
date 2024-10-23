@@ -13,13 +13,13 @@ function ChatBubble({ isMe, user, text, showUser = true }) {
                 <div className="chat-header opacity-65 px-1">{user}</div>
             )}
 
-            <div
+            <pre
                 className={`chat-bubble font-semibold ${
                     !isMe ? "bg-success/80 text-white" : ""
                 }`}
             >
                 {text}
-            </div>
+            </pre>
         </div>
     );
 }
