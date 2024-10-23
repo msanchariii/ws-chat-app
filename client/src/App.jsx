@@ -1,5 +1,4 @@
 import { useState } from "react";
-// import "./App.css";
 import Room from "./components/Room";
 import ChatBubble from "./components/ChatBubble";
 import MessageInput from "./components/MessageInput";
