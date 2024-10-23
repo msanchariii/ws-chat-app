@@ -1,5 +1,5 @@
 import { useState } from "react";
-// import { on } from "ws";
+import PropTypes from "prop-types";
 
 function Room({ onJoin }) {
     const [username, setUsername] = useState("");
@@ -27,5 +27,8 @@ function Room({ onJoin }) {
         </div>
     );
 }
+Room.propTypes = {
+    onJoin: PropTypes.func.isRequired,
+};
 
 export default Room;
