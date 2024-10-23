@@ -3,6 +3,7 @@ import { useState } from "react";
 
 function Room({ onJoin }) {
     const [username, setUsername] = useState("");
+    const [loading, setLoading] = useState(false);
 
     return (
         <div className="flex items-center justify-center space-x-4">
@@ -15,47 +16,16 @@ function Room({ onJoin }) {
             />
             <button
                 className="border-2 p-3 rounded-lg hover:bg-white hover:text-black font-bold"
+                disabled={loading}
                 onClick={() => {
                     onJoin(username);
-                    setUsername("");
+                    setLoading(true);
                 }}
             >
-                Join Chat
+                {loading ? "Joining..." : "Join Chat"}
             </button>
         </div>
     );
 }
 
 export default Room;
-
-// In your main component:
-// function ChatApp() {
-//     const handleJoinChat = (username) => {
-//         const socket = new WebSocket("ws://localhost:3000");
-
-//         socket.onopen = () => {
-//             console.log("Connected to chat");
-//             // Send a join message with the username
-//             socket.send(
-//                 JSON.stringify({
-//                     type: "join",
-//                     payload: { userName: username },
-//                 })
-//             );
-//         };
-
-//         socket.onmessage = (event) => {
-//             console.log("Message from server:", event.data);
-//         };
-
-//         socket.onerror = (error) => {
-//             console.error("WebSocket error:", error);
-//         };
-
-//         socket.onclose = () => {
-//             console.log("Disconnected from chat");
-//         };
-//     };
-
-//     return <Room onJoin={handleJoinChat} />;
-// }
