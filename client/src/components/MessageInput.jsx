@@ -13,7 +13,7 @@ function MessageInput({ onSend }) {
     };
 
     return (
-        <div className="absolute bottom-0 px-6 py-2 w-full flex justify-between items-center space-x-2 ">
+        <div className="fixed bottom-0 px-4 py-2 w-full h-20 flex justify-between items-center space-x-2 ">
             <textarea
                 type="text"
                 value={message}

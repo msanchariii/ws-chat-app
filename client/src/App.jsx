@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Room from "./components/Room";
 import ChatBubble from "./components/ChatBubble";
 import MessageInput from "./components/MessageInput";
@@ -10,6 +10,7 @@ function App() {
     const [myUserId, setMyUserId] = useState("");
     const [messages, setMessages] = useState([]);
     const [socket, setSocket] = useState(null);
+    const messagesEndRef = useRef(null);
 
     console.log("WS URL:", wsUrl);
 
@@ -92,23 +93,30 @@ function App() {
         }
     };
 
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
     return (
         <>
             {isConnected ? (
-                <div className="w-screen">
+                <div className="w-full">
                     <div className="flex justify-between items-center py-4 px-6 bg-slate-950">
-                        <h1 className="font-semibold text-2xl">
-                            {myUserName} @{myUserId}
-                        </h1>
+                        <div>
+                            <h1 className="font-semibold text-2xl">
+                                {myUserName}
+                            </h1>
+                            <h2>@{myUserId}</h2>
+                        </div>
                         <button
                             className="btn btn-accent"
                             onClick={handleLeave}
                         >
-                            Leave Chat Room
+                            Leave
                         </button>
                     </div>
                     {/* code for chat ui will go here */}
-                    <div className="w-full py-4 px-6">
+                    <div className="w-full py-4 px-4">
                         {
                             // map through messages and display them
                             messages.map((message, index) =>
@@ -132,6 +140,8 @@ function App() {
                                 )
                             )
                         }
+                        <div className="h-20" ref={messagesEndRef} />
+                        {/* <div className="h-20"></div> */}
                     </div>
                     {/*  input box to send message + send button*/}
                     <MessageInput onSend={handleSend} />
