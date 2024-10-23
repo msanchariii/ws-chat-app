@@ -6,6 +6,7 @@ import cors from "cors";
 
 dotenv.config();
 const port = process.env.PORT || 3000;
+const origin = process.env.ORIGIN;
 
 /*
  * Sending JSON: You can use JSON.stringify() to convert your JavaScript object into a JSON string before sending it over the WebSocket.
@@ -27,7 +28,11 @@ const port = process.env.PORT || 3000;
  */
 
 const app = express();
-app.use(cors());
+app.use(
+    cors({
+        origin: origin,
+    })
+);
 const chatApp = new ChatApp();
 const server = app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
